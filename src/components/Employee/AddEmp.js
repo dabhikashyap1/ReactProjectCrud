@@ -21,7 +21,6 @@ export default class AddPage extends Component {
 
     handleSubmit = event => {
         debugger;
-        debugger;
         event.preventDefault();
         this.setState({isLoading: true});
         const token = localStorage.getItem('token');
@@ -122,7 +121,7 @@ export default class AddPage extends Component {
                                                 </div>
                                                 <div className="col-md-6">
                                                     <div className="form-label-group">
-                                                        <input  maxlength="10" minLength="10" type="text" id="inputPhone" className="form-control" placeholder="Enter Phone" required="required" pattern="[0-9]*"/> 
+                                                        <input type="number" id="inputPhone" className="form-control" placeholder="Enter Phone" required="required" pattern="[0-9]*"/>
                                                         <label htmlFor="inputPhone">Enter Phone</label>
                                                     </div>
                                                 </div>
