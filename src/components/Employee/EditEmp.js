@@ -153,7 +153,7 @@ export default class EditEmp extends Component {
                                                 </div>
                                                 <div className="col-md-6">
                                                     <div className="form-label-group">
-                                                        <input maxlength="10" minLength="10" type="text"id="inputPhone" className="form-control" placeholder="Enter Phone" required="required" pattern="[0-9]*" />
+                                                        <input maxLength="10" minLength="10" type="text"id="inputPhone" className="form-control" placeholder="Enter Phone" required="required" pattern="[0-9]*" />
                                                         <label htmlFor="inputPhone">Enter Phone</label>
                                                     </div>
                                                 </div>

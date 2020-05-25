@@ -18,7 +18,9 @@ import {
 } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import '@material-ui/icons'
-import {CSVLink, CSVDownload} from 'react-csv';
+import { CSVLink, CSVDownload } from 'react-csv';
+import { RemoveCircleOutlineOutlined as RemoveCircleIcon } from '@material-ui/icons';
+
 
 const drawerWidth = 240;
 
@@ -56,38 +58,41 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
 export default class Index extends Component {
     state = {
         employees: [],
         toDashboard: false,
         isLoading: false,
         Namesearch: '',
-        EmpidSearch: ''
+        EmpidSearch: '',
+        actionsColumnIndex: -1,
+        pageSize: 5,
     };
 
     constructor(props) {
         super(props);
         this.classes = useStyles
-        this.url = 'https://localhost:44377/api/Employee/GetEmployees';
         this.handleNameChange = this.handleNameChange.bind();
         this.handleEmpidChange = this.handleEmpidChange.bind();
         this.handleSearch = this.handleSearch.bind(this);
+
 
         // this.token = localStorage.getItem('token');
     }
 
     componentDidMount() {
         debugger;
+        const url = 'https://localhost:44377/api/Employee/GetEmployees';
+
         const header = {
             'Content-Type': 'application/json;charset=UTF-8',
             'Authorization': "Bearer " + localStorage.getItem("token"),
         }
-        axios.get(this.url, { headers: header })
+        axios.get(url, { headers: header })
             .then(response => {
                 //                const employees = response.data.data.employees;
                 const employees = response.data;
-                this.setState({ employees });
+                this.setState({ employees:employees });
             })
             .catch(error => {
                 this.setState({ toDashboard: true });
@@ -114,6 +119,26 @@ export default class Index extends Component {
             });
     };
 
+    handleClickRowDelete = (event, ids) => {
+        debugger;
+        const header = {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Authorization': "Bearer " + localStorage.getItem("token"),
+        }
+        const url = "https://localhost:44377/api/Employee/DeleteEmployees";
+        var employeeIdsString = String(ids);
+        debugger;
+        axios.delete(url + '/' + employeeIdsString, { headers: header })
+            .then(response => {
+                this.componentDidMount();
+                this.setState({ isLoading: true })
+            })
+            .catch(error => {
+                console.log(error.toString());
+                this.setState({ toDashboard: true });
+            });
+    };
+
     handleClickEdit = (event, id) => {
         event.preventDefault();
         // return( <Redirect to = {{ pathname: 'edit', search: '?id=' + id }} />)
@@ -126,21 +151,105 @@ export default class Index extends Component {
     handleEmpidChange = event => {
         this.setState({ EmpidSearch: event.target.value });
     };
+    handleClearClick = event => {
+        this.setState({ Namesearch: '' });
+        this.setState({ EmpidSearch: '' });
+        document.getElementById('inputName').value ='';
+        document.getElementById('inputEmpcode').value = '';
+
+        this.componentDidMount();
+    };
+
+    actions = [
+        {
+            tooltip: 'Remove All Selected Users',
+            icon: 'delete',
+            //  onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
+            onClick: (event, data) => {
+                debugger;
+                event.preventDefault();
+                var employeeIds = data.map(e => e.employeeId).join(",");
+                this.handleClickRowDelete(event, employeeIds);
+
+
+                //  this.handleClickEdit(event, data.employeeId);
+                // return <Redirect to = {{ pathname: 'edit', search: '?id=' + rowData.employeeId }} />
+            }
+
+        },
+        {
+            icon: 'edit',
+            tooltip: 'Edit Employee',
+            className: "btn btn-sm btn-info",
+            /// isFreeAction: true,
+            position: "row",
+            onClick: (event, rowData) => {
+                debugger;
+                event.preventDefault();
+                this.handleClickEdit(event, rowData.employeeId);
+                // return <Redirect to = {{ pathname: 'edit', search: '?id=' + rowData.employeeId }} />
+            }
+        },
+        {
+            icon: 'delete',
+            tooltip: 'Delete Employee',
+            position: "row",
+            //  isFreeAction: true,
+            onClick: (event, rowData) => {
+                event.preventDefault();
+                this.handleClickDelete(event, rowData.employeeId);
+            }
+            // disabled: rowData.birthYear < 2000
+        },
+
+    ]
+
 
 
     handleSearch = (event) => {
         event.preventDefault();
 
-        var data1 = {
+        var data = {
             fullName: this.state.Namesearch,
             empCode: this.state.EmpidSearch,
-            sortBy: null,
-            pageSize: null,
-            currentIndex: null,
+            sortBy: "fullName",
+            pageSize: this.state.pageSize,
+            currentIndex: (this.state.actionsColumnIndex + 1),
         };
-                //const url = 'https://localhost:44377/api/Employee/SearchEmployees';
-                const url = 'https://localhost:44377/api/Employee/SrchEmp';
+        const url = 'https://localhost:44377/api/Employee/SearchEmployees';
         debugger;
+        const options = {
+            method: 'GET',
+            params: data,
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': "Bearer " + localStorage.getItem("token"),
+                'Content-Type': 'application/json;charset=UTF-8',
+                'X-CMC_PRO_API_KEY': 'my api key'
+            },
+            json: true,
+            gzip: true
+        };
+        const header = {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer " + localStorage.getItem("token"),
+            //'Access-Control-Allow-Origin': '*',
+            //'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+        }
+
+        axios.get(url, options)
+            // axios.post(this.url, data, {
+            //     headers: header
+            // })
+            .then(response => {
+                const employees = response.data.employeeList;
+                this.setState({ employees });
+            })
+            .catch(error => {
+                this.setState({ toDashboard: true });
+                console.log(error);
+            });
+
         // return fetch(url, {
         //     method: 'POST',
         //     body: JSON.stringify(data),
@@ -165,37 +274,14 @@ export default class Index extends Component {
         //             api_response: {success: false}
         //         }
         //     })
-        var data = {
-            FullName: "",
-            Mobile: "",
-            Empcode: "",
-            Position: "",
-            EmployeeId: ""
-        };
-        const header = {
-            'Content-Type': 'application/json',
-            'Authorization': "Bearer " + localStorage.getItem("token"),
-            'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-        }
-        
+        // var data = {
+        //     FullName: "",
+        //     Mobile: "",
+        //     Empcode: "",
+        //     Position: "",
+        //     EmployeeId: ""
+        // };
 
-
-        
-        axios.post(this.url,data, {
-            headers: header
-        })
-        // axios.post(this.url, data, {
-        //     headers: header
-        // })
-            .then(response => {
-                const employees = response.data;
-                this.setState({ employees });
-            })
-            .catch(error => {
-                this.setState({ toDashboard: true });
-                console.log(error);
-            });
     };
 
     render() {
@@ -270,14 +356,14 @@ export default class Index extends Component {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="col-md-8"></div>
                                                     <button className="btn btn-primary btn-block col-md-4" type="submit" disabled={this.state.isLoading ? true : false}>Search  &nbsp;&nbsp;&nbsp;
-                                                    <span>(api is not working yet)</span>
-                                            {/* {isLoading ? (
+                                                        {/* {isLoading ? (
                                                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                             ) : (
                                                     <span></span>
                                                 )} */}
+                                                    </button>
+                                                    <button className="btn btn-secondary btn-block col-md-4" type="button"  onClick={this.handleClearClick}>Clear  &nbsp;&nbsp;&nbsp;
                                                     </button>
                                                 </form>
                                             </div>
@@ -288,7 +374,7 @@ export default class Index extends Component {
                                             &nbsp;&nbsp;Employees List
                                 </div>
                                         <div className="card-body">
-                                        
+
                                             <MaterialTable
                                                 //className="table table-bordered"
                                                 // title="Positioning Actions Column Preview"
@@ -306,32 +392,51 @@ export default class Index extends Component {
 
                                                 ]}
                                                 data={this.state.employees}
-                                                actions={[
-                                                    rowData => ({
-                                                        icon: 'edit',
-                                                        tooltip: 'Edit Employee',
-                                                        className: "btn btn-sm btn-info",
-                                                        // onClick: (event, rowData) => alert("You saved " + rowData.name)
-                                                        onClick: (event, rowData) => {
-                                                            event.preventDefault();
-                                                            this.handleClickEdit(event, rowData.employeeId);
-                                                            // return <Redirect to = {{ pathname: 'edit', search: '?id=' + rowData.employeeId }} />
-                                                        }
-                                                    }),
-                                                    rowData => ({
-                                                        icon: 'delete',
-                                                        tooltip: 'Delete Employee',
-                                                        onClick: (event, rowData) => {
-                                                            event.preventDefault();
-                                                            this.handleClickDelete(event, rowData.employeeId);
-                                                        }
-                                                        // disabled: rowData.birthYear < 2000
-                                                    })
-
-                                                ]}
                                                 options={{
-                                                    actionsColumnIndex: -1
+                                                    actionsColumnIndex: this.state.actionsColumnIndex,
+                                                    pageSize: this.state.pageSize,
+                                                    selection: true
                                                 }}
+                                                actions={this.actions}
+                                            //     actions={[
+                                            //         {
+                                            //           tooltip: 'Remove All Selected Users',
+                                            //           icon: 'add',
+                                            //        //   isFreeAction: true,
+                                            //           onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
+                                            //         },
+                                            //       rowData => ({
+                                            //           icon: 'edit',
+                                            //           tooltip: 'Edit Employee',
+                                            //           className: "btn btn-sm btn-info",
+                                            //           position: 'row',
+                                            //          isFreeAction: true,
+                                            //           // onClick: (event, rowData) => alert("You saved " + rowData.name)
+                                            //           onClick: (event, rowData) => {
+                                            //               event.preventDefault();
+                                            //               this.handleClickEdit(event, rowData.employeeId);
+                                            //               // return <Redirect to = {{ pathname: 'edit', search: '?id=' + rowData.employeeId }} />
+                                            //           }
+                                            //       }),
+                                            //       rowData => ({
+                                            //           icon: 'delete',
+                                            //           tooltip: 'Delete Employee',
+                                            //           isFreeAction: true,
+                                            //           onClick: (event, rowData) => {
+                                            //               event.preventDefault();
+                                            //               this.handleClickDelete(event, rowData.employeeId);
+                                            //           }
+                                            //           // disabled: rowData.birthYear < 2000
+                                            //       }),
+                                            //       // {
+                                            //       //     tooltip: 'Remove All Selected Users',
+                                            //       //     icon: 'add',
+                                            //       //  //   isFreeAction: true,
+                                            //       //     onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
+                                            //       //   }
+
+                                            //   ]}                                               
+
                                             />  </div>
                                         <div className="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                                     </div>
