@@ -23,7 +23,7 @@ function App() {
     <div className="App">
       {/* <Classcomp />
       <Fdas /> */}
-      <Router>
+      <Router >
         <Switch>
           <Route exact path='/' component={LoginCompom} />
           <Route  path="/add" component={AddEmp} />

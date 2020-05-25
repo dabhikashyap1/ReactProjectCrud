@@ -5,6 +5,7 @@ import Header from "../Layouts/header";
 import Sidebar from "../Layouts/sidebar";
 import Services from "../../services/userservices"
 import MuiAlert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 function Alert(props) {
     return <MuiAlert elevation={1} variant="filled" {...props} />;
@@ -27,7 +28,8 @@ export default class EditEmp extends Component {
             redirect: false,
             authError: false,
             isLoading: false,
-            erroredit:false
+            erroredit:false,
+            successedit:false
         };
         //this.componentDidMount = this.componentDidMount.bind();
     }
@@ -87,17 +89,21 @@ export default class EditEmp extends Component {
             'Authorization': "Bearer " + localStorage.getItem("token"),
           }
         axios.put(url, data,{headers: header})
-            // Services.update(this.state.id,data)
             .then(result => {
                 debugger;
                 if (result.status == 200) {
-                    this.setState({ redirect: true, isLoading: false })
+                    this.setState({ redirect: false,successedit:true, isLoading: false })
+                         setTimeout(function(){
+                            this.setState({ redirect: true});
+                           // window.location.href = "/crudgrid"
+                            //return <Redirect to='/crudgrid' />
+                           // this.props.history.push('/crudgrid');
+
+                          }.bind(this), 2000);
                 }
             })
             .catch(error => {
-                this.setState({ erroredit: true , isLoading: false})
-                //this.setState({ toDashboard: true });
-                // return <Redirect to='/crudgrid' />
+                this.setState({ erroredit: true ,successedit:false, isLoading: false})
                 console.log(error);
             });
     };
@@ -107,24 +113,27 @@ export default class EditEmp extends Component {
           return;
         }
     
-        this.setState({ erroredit: false })
+        this.setState({ erroredit: false,successedit:false })
       };
 
     renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect to='/crudgrid' />
+               return <Redirect to='/crudgrid' />
         }
     };
 
+
     render() {
         const isLoading = this.state.isLoading;
-        //        if (this.state.toDashboard === true) {
         if (localStorage.getItem('isLoggedIn') != "true") {
             return <Redirect to='/' />
         }
         return (
-            <div>
-                <Header />
+            <div>    
+                  <CircularProgress />
+                  <CircularProgress color="secondary" />
+          
+                {/* <Header /> */}
                 <div id="wrapper">
                     <Sidebar></Sidebar>
                     <div id="content-wrapper">
@@ -136,13 +145,14 @@ export default class EditEmp extends Component {
                                 </li>
                                 <li className="breadcrumb-item active">Edit</li>
                             </ol>
-                            {this.state.erroredit && <Alert severity="error" onClose={this.handleClose}>Error while adding data.</Alert>}
+                            {this.state.erroredit && <Alert severity="error" onClose={this.handleClose}>Error while updating data.</Alert>}
+                            {this.state.successedit &&<Alert severity="success" onClose={this.handleClose}>Data edited successfully.</Alert>}
                         </div>
                         <div className="container-fluid">
                             <div className="card mx-auto">
                                 <div className="card-header">Employee Edit</div>
                                 <div className="card-body">
-                                    <form onSubmit={this.handleSubmit}>
+                                    <form onSubmit={this.handleSubmit.bind(this)}>
                                         <div className="form-group">
                                             <div className="form-row">
                                                 <div className="col-md-6">

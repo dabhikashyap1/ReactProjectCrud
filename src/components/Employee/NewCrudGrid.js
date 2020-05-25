@@ -6,21 +6,29 @@ import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
-
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Header from "../Layouts/header";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import {
-    createMuiTheme,
-    MuiThemeProvider,
-    withStyles
-} from "@material-ui/core/styles";
+import { createMuiTheme, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import '@material-ui/icons'
 import { CSVLink, CSVDownload } from 'react-csv';
 import { RemoveCircleOutlineOutlined as RemoveCircleIcon } from '@material-ui/icons';
+import MuiAlert from '@material-ui/lab/Alert';
 
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Checkbox from '@material-ui/core/Checkbox';
+
+
+
+function Alert(props) {
+    return <MuiAlert elevation={1} variant="filled" {...props} />;
+}
 
 const drawerWidth = 240;
 
@@ -55,6 +63,9 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         padding: theme.spacing(3),
     },
+    formControl: {
+        margin: theme.spacing(3),
+    },
 }));
 
 
@@ -67,6 +78,13 @@ export default class Index extends Component {
         EmpidSearch: '',
         actionsColumnIndex: -1,
         pageSize: 5,
+        successdelete: false,
+        eerrordelete: false,
+        namechk:true,
+        phnchk:true,
+        empcodechk:true,
+        empidchk:true,
+        positionchk:true
     };
 
     constructor(props) {
@@ -90,9 +108,9 @@ export default class Index extends Component {
         }
         axios.get(url, { headers: header })
             .then(response => {
-                //                const employees = response.data.data.employees;
+                // const employees = response.data.data.employees;
                 const employees = response.data;
-                this.setState({ employees:employees });
+                this.setState({ employees: employees });
             })
             .catch(error => {
                 this.setState({ toDashboard: true });
@@ -110,12 +128,15 @@ export default class Index extends Component {
         // { params: { token: this.token}}
         axios.delete(url + '/' + id, { headers: header })
             .then(response => {
-                this.componentDidMount();
-                this.setState({ isLoading: true })
+                this.setState({ isLoading: true, successdelete: true, eerrordelete: false })
+                setTimeout(function () {
+                    this.componentDidMount();
+                }.bind(this), 2000);
+
             })
             .catch(error => {
                 console.log(error.toString());
-                this.setState({ toDashboard: true });
+                this.setState({ successdelete: false, eerrordelete: true });
             });
     };
 
@@ -128,14 +149,17 @@ export default class Index extends Component {
         const url = "https://localhost:44377/api/Employee/DeleteEmployees";
         var employeeIdsString = String(ids);
         debugger;
-        axios.delete(url + '/' + employeeIdsString, { headers: header })
+        axios.delete(url + '?employeeIdsString=' + employeeIdsString, { headers: header })
             .then(response => {
-                this.componentDidMount();
-                this.setState({ isLoading: true })
+
+                this.setState({ isLoading: true, successdelete: true, eerrordelete: false })
+                setTimeout(function () {
+                    this.componentDidMount();
+                }.bind(this), 2000);
             })
             .catch(error => {
                 console.log(error.toString());
-                this.setState({ toDashboard: true });
+                this.setState({ successdelete: false, eerrordelete: true });
             });
     };
 
@@ -154,7 +178,7 @@ export default class Index extends Component {
     handleClearClick = event => {
         this.setState({ Namesearch: '' });
         this.setState({ EmpidSearch: '' });
-        document.getElementById('inputName').value ='';
+        document.getElementById('inputName').value = '';
         document.getElementById('inputEmpcode').value = '';
 
         this.componentDidMount();
@@ -170,8 +194,6 @@ export default class Index extends Component {
                 event.preventDefault();
                 var employeeIds = data.map(e => e.employeeId).join(",");
                 this.handleClickRowDelete(event, employeeIds);
-
-
                 //  this.handleClickEdit(event, data.employeeId);
                 // return <Redirect to = {{ pathname: 'edit', search: '?id=' + rowData.employeeId }} />
             }
@@ -205,6 +227,19 @@ export default class Index extends Component {
     ]
 
 
+    handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({ successdelete: false, eerrordelete: false })
+    };
+
+     handleChangeCheckbox = event => {
+        debugger;
+        this.setState({ [event.target.name]: event.target.checked });
+      };
+    
 
     handleSearch = (event) => {
         event.preventDefault();
@@ -238,9 +273,6 @@ export default class Index extends Component {
         }
 
         axios.get(url, options)
-            // axios.post(this.url, data, {
-            //     headers: header
-            // })
             .then(response => {
                 const employees = response.data.employeeList;
                 this.setState({ employees });
@@ -249,38 +281,6 @@ export default class Index extends Component {
                 this.setState({ toDashboard: true });
                 console.log(error);
             });
-
-        // return fetch(url, {
-        //     method: 'POST',
-        //     body: JSON.stringify(data),
-        //     headers:{
-        //         'Content-Type': 'application/json',
-        //         'Authorization': "Bearer " + localStorage.getItem("token"),
-        //         'Access-Control-Allow-Origin': '*',
-        //             'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-        //     }
-        //     })
-        //     .then(res => res.json())
-        //     .then((apiResponse)=>{ 
-        //         console.log("api response", apiResponse) 
-        //         return {
-        //             type: "REGISTER_USER",
-        //             api_response: apiResponse.data
-        //         }
-        //     })
-        //     .catch(function (error) {
-        //         return {
-        //             type: "REGISTER_USER",
-        //             api_response: {success: false}
-        //         }
-        //     })
-        // var data = {
-        //     FullName: "",
-        //     Mobile: "",
-        //     Empcode: "",
-        //     Position: "",
-        //     EmployeeId: ""
-        // };
 
     };
 
@@ -307,14 +307,11 @@ export default class Index extends Component {
                         <br ></br>
                         <br ></br>
                         {/* <Header/> */}
+
                         <div id="wrapper">
                             <div id="content-wrapper">
                                 <div className="container-fluid">
                                     <ol className="breadcrumb">
-
-                                        {/* <li className="breadcrumb-item">
-                                                <Link to={'/dashboard'} >Dashboard</Link>
-                                            </li> */}
                                         <li className="breadcrumb-item active">CRUD App</li>
                                         <li className="ml-auto"><Link to={'add'}>Add Employee</Link><br /><CSVLink data={this.state.employees} >Download CSV</CSVLink></li>
                                     </ol>
@@ -356,87 +353,98 @@ export default class Index extends Component {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <button className="btn btn-primary btn-block col-md-4" type="submit" disabled={this.state.isLoading ? true : false}>Search  &nbsp;&nbsp;&nbsp;
+                                                    <button className="btn btn-primary btn-block col-md-2" type="submit" disabled={this.state.isLoading ? true : false}>Search  &nbsp;&nbsp;&nbsp;
                                                         {/* {isLoading ? (
                                                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                             ) : (
                                                     <span></span>
                                                 )} */}
                                                     </button>
-                                                    <button className="btn btn-secondary btn-block col-md-4" type="button"  onClick={this.handleClearClick}>Clear  &nbsp;&nbsp;&nbsp;
+                                                    <button className="btn btn-secondary btn-block col-md-2" type="button" onClick={this.handleClearClick}>Clear  &nbsp;&nbsp;&nbsp;
                                                     </button>
                                                 </form>
+
                                             </div>
+                                            <div className="card-header">Show/hide Columns</div>
+                                            <FormControl component="fieldset" className={this.classes.formControl}>
+                                                {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
+                                                <FormGroup>
+                                                    <FormControlLabel
+                                                        control={<Checkbox checked={(this.state.namechk)} onChange ={this.handleChangeCheckbox} name="namechk" />}
+                                                        label="Full Name"
+                                                    />
+                                                </FormGroup>
+                                            </FormControl>
+                                            <FormControl component="fieldset" className={this.classes.formControl}>
+                                                <FormGroup>
+                                                    <FormControlLabel
+                                                        control={<Checkbox checked={this.state.phnchk} onChange ={this.handleChangeCheckbox} name="phnchk" />}
+                                                        label="Phone Number"
+                                                    />
+                                                </FormGroup>
+                                            </FormControl>
+                                            <FormControl component="fieldset" className={this.classes.formControl}>
+                                                <FormGroup>
+                                                    <FormControlLabel
+                                                        control={<Checkbox checked={this.state.empidchk} onChange ={this.handleChangeCheckbox} name="empidchk" />}
+                                                        label="Emp Id"
+                                                    />
+                                                </FormGroup>
+                                            </FormControl>
+                                            <FormControl component="fieldset" className={this.classes.formControl}>
+                                                <FormGroup>
+                                                    <FormControlLabel
+                                                        control={<Checkbox checked={this.state.empcodechk} onChange ={this.handleChangeCheckbox} name="empcodechk" />}
+                                                        label="Emp code"
+                                                    />
+                                                </FormGroup>
+                                            </FormControl>
+                                            <FormControl component="fieldset" className={this.classes.formControl}>
+                                                <FormGroup>
+                                                    <FormControlLabel
+                                                        control={<Checkbox checked={this.state.positionchk} onChange ={this.handleChangeCheckbox} name="positionchk" />}
+                                                        label="Position"
+                                                    />
+
+                                                </FormGroup>
+                                            </FormControl>
+
                                         </div>
 
 
                                         <div className="card-header"><i className="fas fa-table"></i>
                                             &nbsp;&nbsp;Employees List
-                                </div>
+                                        </div>
                                         <div className="card-body">
+                                            {this.state.eerrordelete && <Alert severity="error" onClose={this.handleClose}>Error while Deleting data.</Alert>}
+                                            {this.state.successdelete && <Alert severity="success" onClose={this.handleClose}>Data Deleted successfully.</Alert>}
 
                                             <MaterialTable
                                                 //className="table table-bordered"
                                                 // title="Positioning Actions Column Preview"
                                                 title=""
                                                 columns={[
-                                                    { title: 'Name', field: 'fullName' },
-                                                    { title: 'Phone Number', field: 'mobile' },
-                                                    { title: 'Employee Id', field: 'employeeId', type: 'numeric' },
+                                                    { title: 'Full Name', field: 'fullName', hidden: (!this.state.namechk) },
+                                                    { title: 'Phone Number', field: 'mobile', hidden: !this.state.phnchk },
+                                                    { title: 'Employee Id', field: 'employeeId', type: 'numeric', hidden: !this.state.empcodechk },
                                                     {
                                                         title: 'Emp Code',
                                                         field: 'empcode',
+                                                        hidden: !this.state.empidchk
                                                         // lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
                                                     },
-                                                    { title: 'Position', field: 'position' },
+                                                    { title: 'Position', field: 'position', hidden: !this.state.positionchk },
 
                                                 ]}
                                                 data={this.state.employees}
                                                 options={{
                                                     actionsColumnIndex: this.state.actionsColumnIndex,
                                                     pageSize: this.state.pageSize,
-                                                    selection: true
+                                                    selection: true,
+                                                    //   exportButton:true,
+                                                    //  filtering:true
                                                 }}
                                                 actions={this.actions}
-                                            //     actions={[
-                                            //         {
-                                            //           tooltip: 'Remove All Selected Users',
-                                            //           icon: 'add',
-                                            //        //   isFreeAction: true,
-                                            //           onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
-                                            //         },
-                                            //       rowData => ({
-                                            //           icon: 'edit',
-                                            //           tooltip: 'Edit Employee',
-                                            //           className: "btn btn-sm btn-info",
-                                            //           position: 'row',
-                                            //          isFreeAction: true,
-                                            //           // onClick: (event, rowData) => alert("You saved " + rowData.name)
-                                            //           onClick: (event, rowData) => {
-                                            //               event.preventDefault();
-                                            //               this.handleClickEdit(event, rowData.employeeId);
-                                            //               // return <Redirect to = {{ pathname: 'edit', search: '?id=' + rowData.employeeId }} />
-                                            //           }
-                                            //       }),
-                                            //       rowData => ({
-                                            //           icon: 'delete',
-                                            //           tooltip: 'Delete Employee',
-                                            //           isFreeAction: true,
-                                            //           onClick: (event, rowData) => {
-                                            //               event.preventDefault();
-                                            //               this.handleClickDelete(event, rowData.employeeId);
-                                            //           }
-                                            //           // disabled: rowData.birthYear < 2000
-                                            //       }),
-                                            //       // {
-                                            //       //     tooltip: 'Remove All Selected Users',
-                                            //       //     icon: 'add',
-                                            //       //  //   isFreeAction: true,
-                                            //       //     onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
-                                            //       //   }
-
-                                            //   ]}                                               
-
                                             />  </div>
                                         <div className="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                                     </div>
@@ -453,11 +461,7 @@ export default class Index extends Component {
 
                     </Container>
                 </main>
-
-
             </div>
-
-
         );
     }
 }

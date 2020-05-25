@@ -16,7 +16,8 @@ export default class AddPage extends Component {
         redirect: false,
         toDashboard: false,
         isLoading: false,
-        erroradd:false
+        erroradd:false,
+        successadd:false
     };
 
     handleSubmit = event => {
@@ -31,15 +32,6 @@ export default class AddPage extends Component {
         const position = document.getElementById('inputPosition').value;
         //const empid = document.getElementById('inputEmpid').value;
 
-        // let bodyFormData = new FormData();
-        // bodyFormData.set('name', name);
-        // bodyFormData.set('phone', phone);
-        // bodyFormData.set('email', email);
-        // bodyFormData.set('location', location);
-        // bodyFormData.set('emp_id', empid);
-        // bodyFormData.set('company', company);
-        // bodyFormData.set('token', token);
-        // axios.post(url, bodyFormData)
         var data = {
             FullName: name,
             Mobile: phone,
@@ -54,12 +46,14 @@ export default class AddPage extends Component {
         axios.post(url, data,{headers: header})
             .then(result => {
                 if (result.status == 200) {
-                    this.setState({redirect: true, isLoading: false})
+                    this.setState({redirect: false,successadd:true, isLoading: false})
+                    setTimeout(function(){
+                        this.setState({ redirect: true});
+                      }.bind(this), 2000);
                 }
             })
             .catch(error => {
                 this.setState({ erroradd: true })
-                //this.setState({ toDashboard: true });
                 //return <Redirect to='/crudgrid' />
                 this.setState({isLoading: false})
                 console.log(error);
@@ -78,7 +72,7 @@ export default class AddPage extends Component {
           return;
         }
     
-        this.setState({ erroradd: false })
+        this.setState({ erroradd: false,successadd:false })
       };
 
     render() {
@@ -91,7 +85,7 @@ export default class AddPage extends Component {
         }
         return (
             <div>
-                <Header/>
+                {/* <Header/> */}
                 <div id="wrapper">
                     <Sidebar></Sidebar>
                     <div id="content-wrapper">
@@ -104,7 +98,7 @@ export default class AddPage extends Component {
                                 <li className="breadcrumb-item active">Add</li>
                             </ol>
                             {this.state.erroradd && <Alert severity="error" onClose={this.handleClose}>Error while adding data.</Alert>}
-
+                            {this.state.successadd &&<Alert severity="success" onClose={this.handleClose}>Data Added successfully.</Alert>}
                         </div>
                         <div className="container-fluid">
                             <div className="card mx-auto">
