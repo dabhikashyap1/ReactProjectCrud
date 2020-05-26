@@ -37,7 +37,7 @@ function Copyright() {
 
 function Alert(props) {
     return <MuiAlert elevation={1} variant="filled" {...props} />;
-  }
+}
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -60,16 +60,16 @@ const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
         '& > * + *': {
-          marginTop: theme.spacing(2),
+            marginTop: theme.spacing(2),
         },
-      },
+    },
 }));
 
 const action = (
     <Button color="secondary" size="small">
-      lorem ipsum dolorem
+        lorem ipsum dolorem
     </Button>
-  );
+);
 
 
 export default class Login extends Component {
@@ -82,7 +82,7 @@ export default class Login extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.renderRedirect = this.renderRedirect.bind(this);
         //const [open, setOpen] = React.useState(false);
-        this.handleClose  = this.handleClose.bind(this);
+        this.handleClose = this.handleClose.bind(this);
         this.state = {
             errors: {},
             IsFormValid: false,
@@ -93,8 +93,9 @@ export default class Login extends Component {
             isLoading: false,
             showSuccessAlert: false,
             showFailAlert: false,
-            open:false,
-            erroropen:false
+            open: false,
+            erroropen: false,
+            failmsg: ''
         };
     }
     // state = {
@@ -114,7 +115,7 @@ export default class Login extends Component {
 
     handleSubmit = event => {
         this.setState({ open: true })
-        this.setState({showSuccessAlert:false,showFailAlert:false});
+        this.setState({ showSuccessAlert: false, showFailAlert: false });
         debugger;
         let errors = {};
         event.preventDefault();
@@ -152,21 +153,22 @@ export default class Login extends Component {
                         this.setState({ open: true })
 
                         localStorage.setItem('token', result.data.token);
-                        this.setState({ redirect: true, isLoading: false ,showSuccessAlert:true});
+                        this.setState({ redirect: true, isLoading: false, showSuccessAlert: true });
                         localStorage.setItem('isLoggedIn', true);
+                        return <Redirect to='/crudgrid' />
                         // this.renderRedirect();
-                       // alert.show("Success");
-                        window.location.href = "/crudgrid"
+                        // alert.show("Success");
+                        //  window.location.href = "/crudgrid"
                     }
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.log(error.response.data.message);
                     debugger;
-                  //  alert.show("Fail");
-                  //this.setOpen(true);
-                  this.setState({ erroropen: true })
-                  
-                    this.setState({showSuccessAlert:false,showFailAlert:true});
+                    //  alert.show("Fail");
+                    //this.setOpen(true);
+                    this.setState({ erroropen: true, failmsg: error.response.data.message })
+
+                    this.setState({ showSuccessAlert: false, showFailAlert: true });
                     this.setState({ authError: true, isLoading: false });
                 });
         }
@@ -174,21 +176,20 @@ export default class Login extends Component {
 
     };
 
-     handleClose = (event, reason) => {
+    handleClose = (event, reason) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
-    
+
         this.setState({ open: false });
-        this.setState({ erroropen: false })
-      };
-      
+        this.setState({ erroropen: false, failmsg: '' })
+    };
+
     renderRedirect = () => {
-        debugger;
 
         if (this.state.redirect) {
 
-            return <Redirect to='/test' />
+            return <Redirect to='/crudgrid' />
         }
     };
 
@@ -196,23 +197,23 @@ export default class Login extends Component {
     render() {
         const isLoading = this.state.isLoading;
         const { classes } = this.props;
-        
-        
+
+
         return (
 
             <Container component="main" maxWidth="xs">
 
-{/* <Snackbar open={false} autoHideDuration={6000} onClose={this.handleClose}>
+                {/* <Snackbar open={false} autoHideDuration={6000} onClose={this.handleClose}>
         <Alert severity="success" onClose={this.handleClose}>Login successfully.</Alert>
 </Snackbar>
 <Snackbar open={this.state.erroropen} autoHideDuration={6000} onClose={this.handleClose}>
         <Alert severity="error" onClose={this.handleClose}>Login Failed.</Alert>
 </Snackbar> */}
-{this.state.erroropen && 
-    <Alert severity="error" onClose={this.handleClose}>Login Failed.</Alert>
-}
+                {this.state.erroropen &&
+                    <Alert severity="error" onClose={this.handleClose}>{this.state.failmsg}</Alert>
+                }
 
-      {/* <Alert severity="error">This is an error message!</Alert>
+                {/* <Alert severity="error">This is an error message!</Alert>
       <Alert severity="warning">This is a warning message!</Alert>
       <Alert severity="info">This is an information message!</Alert>
       <Alert severity="success">This is a success message!</Alert> */}
@@ -222,9 +223,6 @@ export default class Login extends Component {
                 <br></br>
                 <CssBaseline />
                 <div className={this.style.paper}>
-                    {/* <Avatar className={this.style.avatar}>
-                        <LockOutlinedIcon />
-                    </Avatar> */}
                     <Typography component="h1" variant="h5">
                         Sign in
               </Typography>
@@ -240,7 +238,7 @@ export default class Login extends Component {
                             autoComplete="User Name"
                             autoFocus
                             onChange={this.handleEmailChange}
-                            className={ (this.state.showFailAlert ? 'is-invalid' : '')}
+                        // className={ (this.state.showFailAlert ? 'is-invalid' : '')}
                         />
                         {/* <span className="invalid-feedback"  style={{ fontSize: "100%" }}>
                                         Please provide a valid Email.
@@ -260,9 +258,9 @@ export default class Login extends Component {
                             type="password"
                         />
                         <span style={{ color: "red" }}>{this.state.errors["password"]}</span>
-                        <span className="invalid-feedback"  style={{ fontSize: "100%" }}>
+                        {/* <span className="invalid-feedback"  style={{ fontSize: "100%" }}>
                                         Please provide a valid Email or Password.
-                                    </span>
+                                    </span> */}
                         <span style={{ color: "red" }}>{this.state.errors["formsubmit"]}</span>
                         <Button
                             type="submit"
@@ -273,12 +271,12 @@ export default class Login extends Component {
                         >
                             Sign In
                        </Button>
-                       <br />
-                       <br />
+                        <br />
+                        <br />
 
                         <Grid container>
                             <Grid item xs>
-                                <Link href="/style" variant="body2">
+                                <Link to href="/style" variant="body2">
                                     Forgot password?
                           </Link>
                             </Grid>

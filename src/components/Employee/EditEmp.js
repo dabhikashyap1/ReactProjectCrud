@@ -29,6 +29,7 @@ export default class EditEmp extends Component {
             authError: false,
             isLoading: false,
             erroredit:false,
+            erroreditmsg:'',
             successedit:false
         };
         //this.componentDidMount = this.componentDidMount.bind();
@@ -103,7 +104,8 @@ export default class EditEmp extends Component {
                 }
             })
             .catch(error => {
-                this.setState({ erroredit: true ,successedit:false, isLoading: false})
+                console.log(error.response.data.message);
+                this.setState({ erroredit: true ,erroreditmsg:error.response.data.message,successedit:false, isLoading: false})
                 console.log(error);
             });
     };
@@ -113,7 +115,7 @@ export default class EditEmp extends Component {
           return;
         }
     
-        this.setState({ erroredit: false,successedit:false })
+        this.setState({ erroredit: false,erroreditmsg:'',successedit:false })
       };
 
     renderRedirect = () => {
@@ -130,10 +132,14 @@ export default class EditEmp extends Component {
         }
         return (
             <div>    
-                  <CircularProgress />
-                  <CircularProgress color="secondary" />
+                  {/* <CircularProgress />
+                  <CircularProgress color="secondary" /> */}
           
                 {/* <Header /> */}
+                <br />
+                <br />
+                <br />
+                <br />
                 <div id="wrapper">
                     <Sidebar></Sidebar>
                     <div id="content-wrapper">
@@ -145,7 +151,7 @@ export default class EditEmp extends Component {
                                 </li>
                                 <li className="breadcrumb-item active">Edit</li>
                             </ol>
-                            {this.state.erroredit && <Alert severity="error" onClose={this.handleClose}>Error while updating data.</Alert>}
+                {this.state.erroredit && <Alert severity="error" onClose={this.handleClose}>{this.state.erroreditmsg}</Alert>}
                             {this.state.successedit &&<Alert severity="success" onClose={this.handleClose}>Data edited successfully.</Alert>}
                         </div>
                         <div className="container-fluid">

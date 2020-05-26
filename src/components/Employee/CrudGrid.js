@@ -103,10 +103,10 @@ export default class Index extends Component {
                 <Drawer
                     variant="permanent"
                     classes={{
-                        paper: this.classes.drawerPaper,
+                        paper: this.classes.drawerPaper,  
                     }}
                 >
-                    <Sidebar />
+                    <Sidebar /> 
                 </Drawer>
                 <main className={this.classes.content}>
                     <Container maxWidth="lg" className={this.classes.container}>
@@ -133,7 +133,7 @@ export default class Index extends Component {
                                         </ol>
                                         <div className="card-header"><i className="fas fa-table"></i>
                                             &nbsp;&nbsp;Employees List
-                                </div>
+                                       </div>
                                         <div className="card-body">
                                             <table className="table table-bordered">
                                                 <thead>

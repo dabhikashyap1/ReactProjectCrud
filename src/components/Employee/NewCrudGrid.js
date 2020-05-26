@@ -16,14 +16,20 @@ import '@material-ui/icons'
 import { CSVLink, CSVDownload } from 'react-csv';
 import { RemoveCircleOutlineOutlined as RemoveCircleIcon } from '@material-ui/icons';
 import MuiAlert from '@material-ui/lab/Alert';
-
+import MenuIcon from '@material-ui/icons/Menu';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
-
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import WorkIcon from '@material-ui/icons/Work';
+import TablePagination from '@material-ui/core/TablePagination';
+import { Grid } from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
 
 
 function Alert(props) {
@@ -70,29 +76,34 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default class Index extends Component {
-    state = {
-        employees: [],
-        toDashboard: false,
-        isLoading: false,
-        Namesearch: '',
-        EmpidSearch: '',
-        actionsColumnIndex: -1,
-        pageSize: 5,
-        successdelete: false,
-        eerrordelete: false,
-        namechk:true,
-        phnchk:true,
-        empcodechk:true,
-        empidchk:true,
-        positionchk:true
-    };
+
 
     constructor(props) {
         super(props);
+        debugger;
+        this.state = {
+            employees: [],
+            toDashboard: false,
+            isLoading: false,
+            Namesearch: '',
+            EmpidSearch: '',
+            actionsColumnIndex: -1,
+            pageSize: localStorage.getItem('pagesize') ? localStorage.getItem('pagesize') : 5,
+            successdelete: false,
+            eerrordelete: false,
+            namechk: true,
+            phnchk: true,
+            empcodechk: true,
+            empidchk: true,
+            positionchk: true,
+            anchorElshowhide: null
+        };
         this.classes = useStyles
         this.handleNameChange = this.handleNameChange.bind();
         this.handleEmpidChange = this.handleEmpidChange.bind();
         this.handleSearch = this.handleSearch.bind(this);
+        this.onPageChange = this.onPageChange.bind(this);
+        this.onChangeRowsPerPage = this.onChangeRowsPerPage.bind(this);
 
 
         // this.token = localStorage.getItem('token');
@@ -226,6 +237,18 @@ export default class Index extends Component {
 
     ]
 
+    onPageChange = (event) => {
+        debugger;
+        // this.setState({ actionsColumnIndex: (event) });
+        localStorage.setItem('currentPageindex', event)
+    }
+
+    onChangeRowsPerPage = (event) => {
+        debugger;
+        //  this.setState({pageSize:event });
+        localStorage.setItem('pagesize', event)
+
+    }
 
     handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -235,11 +258,20 @@ export default class Index extends Component {
         this.setState({ successdelete: false, eerrordelete: false })
     };
 
-     handleChangeCheckbox = event => {
+    handleChangeCheckbox = event => {
         debugger;
         this.setState({ [event.target.name]: event.target.checked });
-      };
-    
+    };
+
+    handleClickShowhide = (event) => {
+        this.setState({ anchorElshowhide: event.currentTarget });
+
+    };
+
+    handleCloseShowhide = () => {
+        this.setState({ anchorElshowhide: null });
+    };
+
 
     handleSearch = (event) => {
         event.preventDefault();
@@ -307,6 +339,7 @@ export default class Index extends Component {
                         <br ></br>
                         <br ></br>
                         {/* <Header/> */}
+                        <br />
 
                         <div id="wrapper">
                             <div id="content-wrapper">
@@ -317,60 +350,98 @@ export default class Index extends Component {
                                     </ol>
                                     <div className="card mb-12">
                                         <div className="">
-                                            <div className="card-header">Search Employee</div>
+                                            {/* <div className="card-header">Search Employee</div> */}
                                             <div className="card-body">
                                                 <form onSubmit={this.handleSearch} noValidate>
-                                                    {/* <div className="form-group">
-                                                        <div className="form-row">
-                                                            <div className="col-md-4">
-                                                                <div className="form-label-group">
-                                                                    <input type="text" id="inputPosition" className="form-control" placeholder="Enter Position" required="required" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-label-group">
-                                                                    <input type="number" id="inputPhone" className="form-control" placeholder="Enter Phone" required="required" pattern="[0-9]*" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-label-group">
-                                                                    <input type="number" id="inputEmpid" className="form-control" placeholder="Emp Id" required="required" />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div> */}
                                                     <div className="form-group">
                                                         <div className="form-row">
-                                                            <div className="col-md-4">
+                                                            <div className="col-md-6">
                                                                 <div className="form-label-group">
                                                                     <input type="text" id="inputName" className="form-control" placeholder="Enter name" onChange={this.handleNameChange} />
                                                                 </div>
                                                             </div>
-                                                            <div className="col-md-4">
+                                                            <div className="col-md-6">
                                                                 <div className="form-label-group">
                                                                     <input type="text" id="inputEmpcode" className="form-control" placeholder="Emp Code" onChange={this.handleEmpidChange} />
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <button className="btn btn-primary btn-block col-md-2" type="submit" disabled={this.state.isLoading ? true : false}>Search  &nbsp;&nbsp;&nbsp;
+                                                    <button className="btn btn-primary col-md-2" type="submit" disabled={this.state.isLoading ? true : false}>Search  &nbsp;&nbsp;&nbsp;
                                                         {/* {isLoading ? (
                                                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                             ) : (
                                                     <span></span>
                                                 )} */}
                                                     </button>
-                                                    <button className="btn btn-secondary btn-block col-md-2" type="button" onClick={this.handleClearClick}>Clear  &nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    <button className="btn btn-secondary col-md-2" type="button" onClick={this.handleClearClick}>Clear  &nbsp;&nbsp;&nbsp;
                                                     </button>
                                                 </form>
 
                                             </div>
-                                            <div className="card-header">Show/hide Columns</div>
+                                            <button className="btn btn-info col-md-2" aria-haspopup="true" onClick={this.handleClickShowhide}>
+                                                Show/hide columns
+                                                  </button >
+                                            <Menu
+                                                id="simple-menu"
+                                                anchorEl={this.state.anchorElshowhide}
+                                                keepMounted
+                                                open={Boolean(this.state.anchorElshowhide)}
+                                                onClose={this.handleCloseShowhide}
+                                            >
+                                                <FormControl component="fieldset" className={this.classes.formControl}>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            control={<Checkbox checked={(this.state.namechk)} onChange={this.handleChangeCheckbox} name="namechk" />}
+                                                            label="Full Name"
+                                                        />
+                                                    </FormGroup>
+                                                </FormControl>
+
+                                                <FormControl component="fieldset" className={this.classes.formControl}>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            control={<Checkbox checked={this.state.phnchk} onChange={this.handleChangeCheckbox} name="phnchk" />}
+                                                            label="Phone Number"
+                                                        />
+                                                    </FormGroup>
+                                                </FormControl>
+                                                <FormControl component="fieldset" className={this.classes.formControl}>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            control={<Checkbox checked={this.state.empidchk} onChange={this.handleChangeCheckbox} name="empidchk" />}
+                                                            label="Emp Id"
+                                                        />
+                                                    </FormGroup>
+                                                </FormControl>
+                                                <br />
+                                                <FormControl component="fieldset" className={this.classes.formControl}>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            control={<Checkbox checked={this.state.empcodechk} onChange={this.handleChangeCheckbox} name="empcodechk" />}
+                                                            label="Emp code"
+                                                        />
+                                                    </FormGroup>
+                                                </FormControl>
+                                                <FormControl component="fieldset" className={this.classes.formControl}>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            control={<Checkbox checked={this.state.positionchk} onChange={this.handleChangeCheckbox} name="positionchk" />}
+                                                            label="Position"
+                                                        />
+
+                                                    </FormGroup>
+                                                </FormControl>
+                                                {/* <MenuItem onClick={this.handleCloseShowhide}>Profile</MenuItem>
+                                                        <MenuItem onClick={this.handleCloseShowhide}>My account</MenuItem>
+                                                        <MenuItem onClick={this.handleCloseShowhide}>Logout</MenuItem> */}
+                                            </Menu>
+                                            {/* <div className="card-header">Show/hide Columns</div>
                                             <FormControl component="fieldset" className={this.classes.formControl}>
-                                                {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
                                                 <FormGroup>
                                                     <FormControlLabel
-                                                        control={<Checkbox checked={(this.state.namechk)} onChange ={this.handleChangeCheckbox} name="namechk" />}
+                                                        control={<Checkbox checked={(this.state.namechk)} onChange={this.handleChangeCheckbox} name="namechk" />}
                                                         label="Full Name"
                                                     />
                                                 </FormGroup>
@@ -378,7 +449,7 @@ export default class Index extends Component {
                                             <FormControl component="fieldset" className={this.classes.formControl}>
                                                 <FormGroup>
                                                     <FormControlLabel
-                                                        control={<Checkbox checked={this.state.phnchk} onChange ={this.handleChangeCheckbox} name="phnchk" />}
+                                                        control={<Checkbox checked={this.state.phnchk} onChange={this.handleChangeCheckbox} name="phnchk" />}
                                                         label="Phone Number"
                                                     />
                                                 </FormGroup>
@@ -386,7 +457,7 @@ export default class Index extends Component {
                                             <FormControl component="fieldset" className={this.classes.formControl}>
                                                 <FormGroup>
                                                     <FormControlLabel
-                                                        control={<Checkbox checked={this.state.empidchk} onChange ={this.handleChangeCheckbox} name="empidchk" />}
+                                                        control={<Checkbox checked={this.state.empidchk} onChange={this.handleChangeCheckbox} name="empidchk" />}
                                                         label="Emp Id"
                                                     />
                                                 </FormGroup>
@@ -394,7 +465,7 @@ export default class Index extends Component {
                                             <FormControl component="fieldset" className={this.classes.formControl}>
                                                 <FormGroup>
                                                     <FormControlLabel
-                                                        control={<Checkbox checked={this.state.empcodechk} onChange ={this.handleChangeCheckbox} name="empcodechk" />}
+                                                        control={<Checkbox checked={this.state.empcodechk} onChange={this.handleChangeCheckbox} name="empcodechk" />}
                                                         label="Emp code"
                                                     />
                                                 </FormGroup>
@@ -402,50 +473,97 @@ export default class Index extends Component {
                                             <FormControl component="fieldset" className={this.classes.formControl}>
                                                 <FormGroup>
                                                     <FormControlLabel
-                                                        control={<Checkbox checked={this.state.positionchk} onChange ={this.handleChangeCheckbox} name="positionchk" />}
+                                                        control={<Checkbox checked={this.state.positionchk} onChange={this.handleChangeCheckbox} name="positionchk" />}
                                                         label="Position"
                                                     />
 
                                                 </FormGroup>
-                                            </FormControl>
+                                            </FormControl> */}
 
                                         </div>
 
 
-                                        <div className="card-header"><i className="fas fa-table"></i>
+                                        {/* <div className="card-header"><i className="fas fa-table"></i>
                                             &nbsp;&nbsp;Employees List
-                                        </div>
+                                        </div> */}
                                         <div className="card-body">
                                             {this.state.eerrordelete && <Alert severity="error" onClose={this.handleClose}>Error while Deleting data.</Alert>}
                                             {this.state.successdelete && <Alert severity="success" onClose={this.handleClose}>Data Deleted successfully.</Alert>}
+                                            <Grid container>
+                                                <Grid item xs={12}>
+                                                    <MaterialTable border="1px solid black" fixedHeader={false} width="auto" tableLayout="auto"
+                                                        // // onSearchChange={(e) => alert("search changed: " + e)}
+                                                          onChangeRowsPerPage={this.onChangeRowsPerPage}
+                                                        // // onOrderChange={(e) => alert("search changed: " + e)}
+                                                          onChangePage = {this.onPageChange}
+                                                        //className="table table-bordered"
+                                                        // title="Positioning Actions Column Preview"
+                                                        title=""
+                                                        columns={[
+                                                            { title: 'Full Name', field: 'fullName', hidden: (!this.state.namechk) },
+                                                            { title: 'Phone Number', field: 'mobile', type: 'numeric', hidden: !this.state.phnchk },
+                                                            { title: 'Employee Id', field: 'employeeId', type: 'numeric', hidden: !this.state.empcodechk },
+                                                            {
+                                                                title: 'Emp Code',
+                                                                field: 'empcode',
+                                                                hidden: !this.state.empidchk
+                                                                // lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
+                                                            },
+                                                            { title: 'Position', field: 'position', hidden: !this.state.positionchk },
 
-                                            <MaterialTable
-                                                //className="table table-bordered"
-                                                // title="Positioning Actions Column Preview"
-                                                title=""
-                                                columns={[
-                                                    { title: 'Full Name', field: 'fullName', hidden: (!this.state.namechk) },
-                                                    { title: 'Phone Number', field: 'mobile', hidden: !this.state.phnchk },
-                                                    { title: 'Employee Id', field: 'employeeId', type: 'numeric', hidden: !this.state.empcodechk },
-                                                    {
-                                                        title: 'Emp Code',
-                                                        field: 'empcode',
-                                                        hidden: !this.state.empidchk
-                                                        // lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
-                                                    },
-                                                    { title: 'Position', field: 'position', hidden: !this.state.positionchk },
+                                                        ]}
+                                                        data={this.state.employees}
+                                                        options={{
+                                                            pageSize: 3,
+                                                             initialPage: 2,
+                                                            actionsColumnIndex: -1,
+                                                            pageSize: this.state.pageSize,
+                                                            //  paging:true,
+                                                            //   count:2,
+                                                            //  page:3,
+                                                            // initialPage: 2,
+                                                            // paginationType:'stepped',
 
-                                                ]}
-                                                data={this.state.employees}
-                                                options={{
-                                                    actionsColumnIndex: this.state.actionsColumnIndex,
-                                                    pageSize: this.state.pageSize,
-                                                    selection: true,
-                                                    //   exportButton:true,
-                                                    //  filtering:true
-                                                }}
-                                                actions={this.actions}
-                                            />  </div>
+                                                            selection: true,
+                                                          //  exportButton: true,
+                                                            filtering: true,
+                                                            headerStyle: {
+                                                                backgroundColor: 'lightgray',
+                                                                 color: 'black',
+                                                                border:"1px solid black"
+                                                            },
+                                                            actionsCellStyle:{
+                                                               // backgroundColor: 'lightskyblue',
+                                                                color: 'darkgreen',
+                                                            }
+                                                            // filterCellStyle: {
+                                                            //     backgroundColor: 'lightgreen',
+                                                            //     color: '#FFF'
+                                                            // }
+                                                        }}
+                                                        // components={{
+                                                        //     FilterRow: props => (
+                                                        //       <Button
+                                                        //         color="primary"
+                                                        //         variant="contained"
+                                                        //         style={{textTransform: 'none'}}
+                                                        //         size="small"
+                                                        //       >
+                                                        //         My Button
+                                                        //       </Button>
+                                                        //     ),
+                                                        //   }}
+                                                        icons={{
+                                                            Filter: props => (
+                                                                <SearchIcon />
+                                                            ),
+                                                        }}
+                                                        actions={this.actions}
+                                                    />
+                                                </Grid>
+                                            </Grid>
+
+                                        </div>
                                         <div className="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                                     </div>
                                 </div>

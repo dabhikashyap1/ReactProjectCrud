@@ -17,6 +17,7 @@ export default class AddPage extends Component {
         toDashboard: false,
         isLoading: false,
         erroradd:false,
+        erroraddmsg:'',
         successadd:false
     };
 
@@ -53,7 +54,8 @@ export default class AddPage extends Component {
                 }
             })
             .catch(error => {
-                this.setState({ erroradd: true })
+                console.log(error.response.data.message);
+                this.setState({ erroradd: true ,erroraddmsg:error.response.data.message})
                 //return <Redirect to='/crudgrid' />
                 this.setState({isLoading: false})
                 console.log(error);
@@ -72,7 +74,7 @@ export default class AddPage extends Component {
           return;
         }
     
-        this.setState({ erroradd: false,successadd:false })
+        this.setState({ erroradd: false,erroraddmsg:'',successadd:false })
       };
 
     render() {
@@ -86,6 +88,10 @@ export default class AddPage extends Component {
         return (
             <div>
                 {/* <Header/> */}
+                <br />
+                <br />
+                <br />
+                <br />
                 <div id="wrapper">
                     <Sidebar></Sidebar>
                     <div id="content-wrapper">
@@ -97,7 +103,7 @@ export default class AddPage extends Component {
                                 </li>
                                 <li className="breadcrumb-item active">Add</li>
                             </ol>
-                            {this.state.erroradd && <Alert severity="error" onClose={this.handleClose}>Error while adding data.</Alert>}
+                            {this.state.erroradd && <Alert severity="error" onClose={this.handleClose}>{this.state.erroraddmsg}</Alert>}
                             {this.state.successadd &&<Alert severity="success" onClose={this.handleClose}>Data Added successfully.</Alert>}
                         </div>
                         <div className="container-fluid">

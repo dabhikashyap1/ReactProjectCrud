@@ -74,7 +74,8 @@ const useStyles = makeStyles((theme) => ({
                 redirect: false,
                 authError: false,
                 isLoading: false,
-                errorsignup:false
+                errorsignup:false,
+                errorsignupmsg:''
             };
         }
 
@@ -145,8 +146,8 @@ const useStyles = makeStyles((theme) => ({
                     }
                 })
                 .catch(error => {
-                    this.setState({ errorsignup: true });
-                    console.log(error);
+                    console.log(error.response.data.message);
+                    this.setState({ errorsignup: true,errorsignupmsg:error.response.data.message });
                     this.setState({ authError: true, isLoading: false });
                 });
         }
@@ -157,7 +158,7 @@ const useStyles = makeStyles((theme) => ({
           return;
         }
     
-        this.setState({ errorsignup: false })
+        this.setState({ errorsignup: false,errorsignupmsg:'' })
       };
 
     renderRedirect = () => {
@@ -168,7 +169,7 @@ const useStyles = makeStyles((theme) => ({
     render() {
     return (
         <Container component="main" maxWidth="xs">
-            {this.state.errorsignup && <Alert severity="error" onClose={this.handleClose}>Signup Failed.</Alert>}
+            {this.state.errorsignup && <Alert severity="error" onClose={this.handleClose}>{this.state.errorsignupmsg}</Alert>}
                 <br></br>
                 <br></br>
                 <br></br>

@@ -1,14 +1,13 @@
 import React from 'react'
 import { makeStyles, createStyles, useTheme } from '@material-ui/core/styles'
 import { BrowserRouter as Router, Switch, Route, Link,Redirect } from "react-router-dom";
-
+import WorkIcon from '@material-ui/icons/Work';
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Divider from '@material-ui/core/Divider'
 import Collapse from '@material-ui/core/Collapse'
-
 import IconExpandLess from '@material-ui/icons/ExpandLess'
 import IconExpandMore from '@material-ui/icons/ExpandMore'
 import IconDashboard from '@material-ui/icons/Dashboard'
@@ -17,7 +16,6 @@ import IconPeople from '@material-ui/icons/People'
 import IconBarChart from '@material-ui/icons/BarChart'
 import IconLibraryBooks from '@material-ui/icons/LibraryBooks'
 import ExitToAppSharpIcon from '@material-ui/icons/ExitToAppSharp';
-
 import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
@@ -72,6 +70,7 @@ const AppMenu = () => {
           <Typography variant="h6" noWrap className={classes.title}>
             Menu
       </Typography>
+      {/* <button color="inherit">Login</button> */}
 
           <IconButton
             color="inherit"
@@ -82,6 +81,7 @@ const AppMenu = () => {
           >
             <MenuIcon />
           </IconButton>
+          
         </Toolbar>
       </AppBar>
 
@@ -94,7 +94,7 @@ const AppMenu = () => {
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader}>
+        <div className={classes.drawerHeader} >
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
@@ -103,60 +103,31 @@ const AppMenu = () => {
         <List component="nav" className={classes.appMenu} disablePadding>
           <ListItem button component="a" href="/crudgrid" className={classes.menuItem}>
             <ListItemIcon className={classes.menuItemIcon}>
-              <IconDashboard />
+              <WorkIcon />
             </ListItemIcon>
-            <ListItemText primary="CRUD" />
+            <ListItemText primary="Employee Data" />
           </ListItem>
-
-
           <ListItem button className={classes.menuItem}>
             <ListItemIcon className={classes.menuItemIcon}>
               <IconShoppingCart />
             </ListItemIcon>
             <ListItemText primary="Orders" />
           </ListItem>
-
           <ListItem button className={classes.menuItem}>
             <ListItemIcon className={classes.menuItemIcon}>
               <IconPeople />
             </ListItemIcon>
             <ListItemText primary="Customers" />
           </ListItem>
-
           <ListItem button className={classes.menuItem}>
             <ListItemIcon className={classes.menuItemIcon}>
               <IconBarChart />
             </ListItemIcon>
             <ListItemText primary="Reports" />
           </ListItem>
-          <ListItem button onClick={handleClick} className={classes.menuItem}>
-            <ListItemIcon className={classes.menuItemIcon}>
-              <IconLibraryBooks />
-            </ListItemIcon>
-            <ListItemText primary="Nested Pages" />
-            {openinside ? <IconExpandLess /> : <IconExpandMore />}
-          </ListItem>
-          <Collapse in={openinside} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem button className={classes.menuItem}>
-                <ListItemText inset primary="Nested Page 1" />
-              </ListItem>
-              <ListItem button className={classes.menuItem}>
-                <ListItemText inset primary="Nested Page 2" />
-              </ListItem>
-            </List>
-          </Collapse>
         </List>
         {/* <Divider /> */}
         <List component="nav" className={classes.appMenu} disablePadding>
-          <ListItem button component="a" href="/crudgrid" className={classes.menuItem}>
-            <ListItemIcon className={classes.menuItemIcon}>
-              <IconDashboard />
-            </ListItemIcon>
-            <ListItemText primary="CRUD" />
-          </ListItem>
-
 
           <ListItem button className={classes.menuItem}>
             <ListItemIcon className={classes.menuItemIcon}>
@@ -171,7 +142,24 @@ const AppMenu = () => {
             </ListItemIcon>
             <ListItemText primary="Customers" />
           </ListItem>
-
+          <ListItem button onClick={handleClick} className={classes.menuItem}>
+            <ListItemIcon className={classes.menuItemIcon}>
+              <IconLibraryBooks />
+            </ListItemIcon>
+            <ListItemText primary="Nested Tabs" />
+            {openinside ? <IconExpandLess /> : <IconExpandMore />}
+          </ListItem>
+          <Collapse in={openinside} timeout="auto" unmountOnExit>
+            <Divider />
+            <List component="div" disablePadding>
+              <ListItem button className={classes.menuItem}>
+                <ListItemText inset primary="Nested Tab 1" />
+              </ListItem>
+              <ListItem button className={classes.menuItem}>
+                <ListItemText inset primary="Nested Tab 2" />
+              </ListItem>
+            </List>
+          </Collapse>
           <ListItem button className={classes.menuItem}  onClick={handleClickLogout}>
             <ListItemIcon className={classes.menuItemIcon} >
               <ExitToAppSharpIcon />
@@ -252,7 +240,8 @@ const useStyles = makeStyles(theme =>
       width: drawerWidth,
     },
     menuItemIcon: {
-      color: '#97c05c',
+      //  color: '#97c05c',
+        color: '#3f51b5',
     },
   }),
 )
