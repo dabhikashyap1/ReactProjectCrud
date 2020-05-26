@@ -132,10 +132,10 @@ export default class Login extends Component {
             errors["password"] = "Password can not be empty";
             this.setState({ errors: errors });
         }
-        // else if (!this.state.password.match(/^[a-zA-Z]+$/)) {
-        //     errors["password"] = "Only letters";
-        //     this.setState({ errors: errors });
-        // }
+         else if (!((this.state.password).match((/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$/)))) {
+            errors["password"] = "Password should be Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.";
+            this.setState({ errors: errors });
+        }
         else {
             errors = {};
             this.setState({ errors: errors });
@@ -155,10 +155,10 @@ export default class Login extends Component {
                         localStorage.setItem('token', result.data.token);
                         this.setState({ redirect: true, isLoading: false, showSuccessAlert: true });
                         localStorage.setItem('isLoggedIn', true);
-                        return <Redirect to='/crudgrid' />
+                       // return <Redirect to='/crudgrid' />
                         // this.renderRedirect();
                         // alert.show("Success");
-                        //  window.location.href = "/crudgrid"
+                          window.location.href = "/crudgrid"
                     }
                 })
                 .catch(error => {
@@ -276,7 +276,7 @@ export default class Login extends Component {
 
                         <Grid container>
                             <Grid item xs>
-                                <Link to href="/style" variant="body2">
+                                <Link to="/forgotpassword" variant="body2">
                                     Forgot password?
                           </Link>
                             </Grid>

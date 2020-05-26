@@ -47,7 +47,7 @@ export default class AddPage extends Component {
         axios.post(url, data,{headers: header})
             .then(result => {
                 if (result.status == 200) {
-                    this.setState({redirect: false,successadd:true, isLoading: false})
+                    this.setState({redirect: false,successadd:true,erroradd:false, isLoading: false})
                     setTimeout(function(){
                         this.setState({ redirect: true});
                       }.bind(this), 2000);
@@ -55,7 +55,7 @@ export default class AddPage extends Component {
             })
             .catch(error => {
                 console.log(error.response.data.message);
-                this.setState({ erroradd: true ,erroraddmsg:error.response.data.message})
+                this.setState({ erroradd: true ,successadd:false,erroraddmsg:error.response.data.message})
                 //return <Redirect to='/crudgrid' />
                 this.setState({isLoading: false})
                 console.log(error);

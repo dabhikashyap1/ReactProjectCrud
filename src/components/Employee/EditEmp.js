@@ -93,7 +93,7 @@ export default class EditEmp extends Component {
             .then(result => {
                 debugger;
                 if (result.status == 200) {
-                    this.setState({ redirect: false,successedit:true, isLoading: false })
+                    this.setState({ redirect: false,successedit:true,erroredit:false, isLoading: false })
                          setTimeout(function(){
                             this.setState({ redirect: true});
                            // window.location.href = "/crudgrid"
@@ -105,7 +105,7 @@ export default class EditEmp extends Component {
             })
             .catch(error => {
                 console.log(error.response.data.message);
-                this.setState({ erroredit: true ,erroreditmsg:error.response.data.message,successedit:false, isLoading: false})
+                this.setState({ erroredit: true ,successedit:false,erroreditmsg:error.response.data.message,successedit:false, isLoading: false})
                 console.log(error);
             });
     };

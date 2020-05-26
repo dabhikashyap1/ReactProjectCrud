@@ -16,6 +16,7 @@ import Greet from './components/Others/Greet';
 import Signup from './components/Home/Signup';
 import TableTest from './components/Others/Table4'
 import Table2 from './components/Others/Table2'
+import ForgotPass from './components/Home/ForgotPass'
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route  path='/crudgrid' component={CrudGrid} />
           <Route  path='/edit/' component={Editemp} />
           <Route  path='/signup' component={Signup} />          
+          <Route  path='/forgotpassword' component={ForgotPass} />  
                
           {/*    <Route path='*' component={NotFound} /> 
                    <Route exact path='/test' component={NavComponent} />
