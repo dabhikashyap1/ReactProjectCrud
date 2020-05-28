@@ -53,8 +53,8 @@ const useStyles = makeStyles((theme) => ({
 
 //export default function SignUp() {
     export default class Register extends Component {
-        constructor() {
-            super();
+        constructor(props) {
+            super(props);
             this.classes = makeStyles;
             this.handleEmailChange = this.handleEmailChange.bind(this);
             this.handleNameChange = this.handleNameChange.bind(this);

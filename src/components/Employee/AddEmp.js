@@ -52,7 +52,7 @@ export default class AddPage extends Component {
                         this.setState({ redirect: true});
                       }.bind(this), 2000);
                 }
-            })
+            }) 
             .catch(error => {
                 console.log(error.response.data.message);
                 this.setState({ erroradd: true ,successadd:false,erroraddmsg:error.response.data.message})

@@ -89,6 +89,7 @@ export default class Index extends Component {
             EmpidSearch: '',
             actionsColumnIndex: -1,
             pageSize: localStorage.getItem('pagesize') ? localStorage.getItem('pagesize') : 5,
+            currentPageindex:0,
             successdelete: false,
             eerrordelete: false,
             namechk: true,
@@ -99,8 +100,8 @@ export default class Index extends Component {
             anchorElshowhide: null
         };
         this.classes = useStyles
-        this.handleNameChange = this.handleNameChange.bind();
-        this.handleEmpidChange = this.handleEmpidChange.bind();
+        this.handleNameChange = this.handleNameChange.bind(this);
+        this.handleEmpidChange = this.handleEmpidChange.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
         this.onPageChange = this.onPageChange.bind(this);
         this.onChangeRowsPerPage = this.onChangeRowsPerPage.bind(this);
@@ -239,13 +240,13 @@ export default class Index extends Component {
 
     onPageChange = (event) => {
         debugger;
-        // this.setState({ actionsColumnIndex: (event) });
+         this.setState({ currentPageindex: event });
         localStorage.setItem('currentPageindex', event)
     }
 
     onChangeRowsPerPage = (event) => {
         debugger;
-        //  this.setState({pageSize:event });
+          this.setState({pageSize:event });
         localStorage.setItem('pagesize', event)
 
     }
@@ -275,13 +276,13 @@ export default class Index extends Component {
 
     handleSearch = (event) => {
         event.preventDefault();
-
+  
         var data = {
             fullName: this.state.Namesearch,
             empCode: this.state.EmpidSearch,
             sortBy: "fullName",
             pageSize: this.state.pageSize,
-            currentIndex: (this.state.actionsColumnIndex + 1),
+            currentIndex: (this.state.currentPageindex),
         };
         const url = 'https://localhost:44377/api/Employee/SearchEmployees';
         debugger;
@@ -496,7 +497,7 @@ export default class Index extends Component {
                                                           onChangeRowsPerPage={this.onChangeRowsPerPage}
                                                         // // onOrderChange={(e) => alert("search changed: " + e)}
                                                           onChangePage = {this.onPageChange}
-                                                        //className="table table-bordered"
+                                                        className="table table-bordered"
                                                         // title="Positioning Actions Column Preview"
                                                         title=""
                                                         columns={[

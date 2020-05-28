@@ -95,7 +95,9 @@ export default class Login extends Component {
             showFailAlert: false,
             open: false,
             erroropen: false,
-            failmsg: ''
+            failmsg: '',
+            loginsuccess:false,
+            loginsuccessmsg:''
         };
     }
     // state = {
@@ -150,15 +152,18 @@ export default class Login extends Component {
             axios.post(url, data)
                 .then(result => {
                     if (result.status == 200) {
-                        this.setState({ open: true })
-
+                        debugger;
                         localStorage.setItem('token', result.data.token);
-                        this.setState({ redirect: true, isLoading: false, showSuccessAlert: true });
+                        this.setState({ loginsuccess:true,loginsuccessmsg:'Login successfully' });
+                        this.setState({ open: true,loginsuccess:true,loginsuccessmsg:'Login successfully' , redirect: true, isLoading: false, showSuccessAlert: true ,erroropen: false, failmsg:''});
                         localStorage.setItem('isLoggedIn', true);
                        // return <Redirect to='/crudgrid' />
                         // this.renderRedirect();
                         // alert.show("Success");
-                          window.location.href = "/crudgrid"
+                         // setTimeout(function(){
+                           // window.location.href = "/crudgrid"
+                           this.props.history.push('/crudgrid');
+                       //   }.bind(this), 2000);
                     }
                 })
                 .catch(error => {
@@ -166,8 +171,7 @@ export default class Login extends Component {
                     debugger;
                     //  alert.show("Fail");
                     //this.setOpen(true);
-                    this.setState({ erroropen: true, failmsg: error.response.data.message })
-
+                    this.setState({ erroropen: true, failmsg: error.response.data.message,loginsuccess:false,loginsuccessmsg:'' })
                     this.setState({ showSuccessAlert: false, showFailAlert: true });
                     this.setState({ authError: true, isLoading: false });
                 });
@@ -182,7 +186,7 @@ export default class Login extends Component {
         }
 
         this.setState({ open: false });
-        this.setState({ erroropen: false, failmsg: '' })
+        this.setState({ erroropen: false, failmsg: '' ,loginsuccess:false,loginsuccessmsg:''})
     };
 
     renderRedirect = () => {
@@ -212,6 +216,12 @@ export default class Login extends Component {
                 {this.state.erroropen &&
                     <Alert severity="error" onClose={this.handleClose}>{this.state.failmsg}</Alert>
                 }
+
+                {this.state.loginsuccess &&
+                    <Alert severity="success" onClose={this.handleClose}>{this.state.loginsuccessmsg}</Alert>
+                }
+                
+
 
                 {/* <Alert severity="error">This is an error message!</Alert>
       <Alert severity="warning">This is a warning message!</Alert>

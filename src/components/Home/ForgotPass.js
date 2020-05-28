@@ -74,8 +74,8 @@ const action = (
 
 export default class Login extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.style = makeStyles;
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
