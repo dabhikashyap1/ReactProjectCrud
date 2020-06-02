@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MaterialTable from "material-table";
+import MaterialTable, { MTablePagination } from "material-table";
 //import Header from "../elements/header";
 import Sidebar from "../Layouts/sidebar";
 import { Link, Redirect } from 'react-router-dom';
@@ -89,7 +89,7 @@ export default class Index extends Component {
             EmpidSearch: '',
             actionsColumnIndex: -1,
             pageSize: localStorage.getItem('pagesize') ? localStorage.getItem('pagesize') : 5,
-            currentPageindex:0,
+            currentPageindex: 0,
             successdelete: false,
             eerrordelete: false,
             namechk: true,
@@ -121,6 +121,7 @@ export default class Index extends Component {
         axios.get(url, { headers: header })
             .then(response => {
                 // const employees = response.data.data.employees;
+                debugger;
                 const employees = response.data;
                 this.setState({ employees: employees });
             })
@@ -238,15 +239,16 @@ export default class Index extends Component {
 
     ]
 
+
     onPageChange = (event) => {
         debugger;
-         this.setState({ currentPageindex: event });
+        this.setState({ currentPageindex: event });
         localStorage.setItem('currentPageindex', event)
     }
 
     onChangeRowsPerPage = (event) => {
         debugger;
-          this.setState({pageSize:event });
+        this.setState({ pageSize: event });
         localStorage.setItem('pagesize', event)
 
     }
@@ -276,7 +278,7 @@ export default class Index extends Component {
 
     handleSearch = (event) => {
         event.preventDefault();
-  
+
         var data = {
             fullName: this.state.Namesearch,
             empCode: this.state.EmpidSearch,
@@ -494,9 +496,9 @@ export default class Index extends Component {
                                                 <Grid item xs={12}>
                                                     <MaterialTable border="1px solid black" fixedHeader={false} width="auto" tableLayout="auto"
                                                         // // onSearchChange={(e) => alert("search changed: " + e)}
-                                                          onChangeRowsPerPage={this.onChangeRowsPerPage}
+                                                        onChangeRowsPerPage={this.onChangeRowsPerPage}
                                                         // // onOrderChange={(e) => alert("search changed: " + e)}
-                                                          onChangePage = {this.onPageChange}
+                                                        onChangePage={this.onPageChange}
                                                         className="table table-bordered"
                                                         // title="Positioning Actions Column Preview"
                                                         title=""
@@ -514,27 +516,52 @@ export default class Index extends Component {
 
                                                         ]}
                                                         data={this.state.employees}
+                                                        // other props
+                                        
+                                                        // data={query =>
+                                                        //     new Promise((resolve, reject) => {
+                                                        //         let url = 'https://localhost:44377/api/Employee/GetEmployees';
+
+                                                        //         let header = {
+                                                        //             'Content-Type': 'application/json;charset=UTF-8',
+                                                        //             'Authorization': "Bearer " + localStorage.getItem("token"),
+                                                        //         }
+                                                              
+                                                        //       fetch(url, { headers: header })
+                                                        //         .then(response => response.json())
+                                                        //         .then(result => {
+                                                        //             debugger;
+                                                        //           resolve({
+                                                        //             data: result,
+                                                        //             page: 1,
+                                                        //             totalCount: result.length,
+                                                        //           })
+                                                        //         })
+                                                        //     })
+                                                        //   }
                                                         options={{
-                                                            pageSize: 3,
-                                                             initialPage: 2,
+                                                           //   pageSize: 2,
+                                                            //    initialPage: 3,
+                                                            pageSizeOptions:[5, 10, 20, 300],
                                                             actionsColumnIndex: -1,
-                                                            pageSize: this.state.pageSize,
-                                                            //  paging:true,
+                                                             pageSize: this.state.pageSize,
+                                                            // PageOptions:[5, 10, 20, 300],
+                                                              paging:true,
                                                             //   count:2,
-                                                            //  page:3,
-                                                            // initialPage: 2,
-                                                            // paginationType:'stepped',
+                                                              //page:0,
+                                                            // initialPage: 0,
+                                                             paginationType:'stepped',
 
                                                             selection: true,
-                                                          //  exportButton: true,
+                                                            //  exportButton: true,
                                                             filtering: true,
                                                             headerStyle: {
                                                                 backgroundColor: 'lightgray',
-                                                                 color: 'black',
-                                                                border:"1px solid black"
+                                                                color: 'black',
+                                                                border: "1px solid black"
                                                             },
-                                                            actionsCellStyle:{
-                                                               // backgroundColor: 'lightskyblue',
+                                                            actionsCellStyle: {
+                                                                // backgroundColor: 'lightskyblue',
                                                                 color: 'darkgreen',
                                                             }
                                                             // filterCellStyle: {
@@ -542,18 +569,22 @@ export default class Index extends Component {
                                                             //     color: '#FFF'
                                                             // }
                                                         }}
-                                                        // components={{
-                                                        //     FilterRow: props => (
-                                                        //       <Button
-                                                        //         color="primary"
-                                                        //         variant="contained"
-                                                        //         style={{textTransform: 'none'}}
-                                                        //         size="small"
-                                                        //       >
-                                                        //         My Button
-                                                        //       </Button>
+                                                        
+                                                        // components={
+                                                        //     {
+                                                        //     Pagination: props => (
+                                                        //         <MTablePagination {...props}
+                                                        //         rowsPerPage={this.state.pageSize}
+                                                        //         rowsPerPageOptions={[5, 10, 20, 300]}
+                                                        //         count={this.state.employees.length}
+                                                        //         page={
+                                                        //           1  //this.state.currentPageindex
+                                                        //           }
+                                                        //         />
+                                                            
                                                         //     ),
-                                                        //   }}
+                                                        //   }
+                                                        // }
                                                         icons={{
                                                             Filter: props => (
                                                                 <SearchIcon />

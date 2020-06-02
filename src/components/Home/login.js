@@ -163,15 +163,21 @@ export default class Login extends Component {
                          // setTimeout(function(){
                            // window.location.href = "/crudgrid"
                            this.props.history.push('/crudgrid');
+                          // this.props.history.push('/navtest');
                        //   }.bind(this), 2000);
                     }
                 })
                 .catch(error => {
+                   // this.props.history.push('/navtest');
                     console.log(error.response.data.message);
+                    let msg = '';
+                    if( error.response.data.message != undefined){
+                        msg = error.response.data.message;
+                    }
                     debugger;
                     //  alert.show("Fail");
                     //this.setOpen(true);
-                    this.setState({ erroropen: true, failmsg: error.response.data.message,loginsuccess:false,loginsuccessmsg:'' })
+                    this.setState({ erroropen: true, failmsg: msg,loginsuccess:false,loginsuccessmsg:'' })
                     this.setState({ showSuccessAlert: false, showFailAlert: true });
                     this.setState({ authError: true, isLoading: false });
                 });

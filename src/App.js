@@ -12,7 +12,7 @@ import CrudGrid from "./components/Employee/NewCrudGrid";
 //import login from "./components/login-component.component";
 import Editemp from "./components/Employee/EditEmp";
 import AddEmp from "./components/Employee/AddEmp";
-import Greet from './components/Others/Greet';
+import Reduce from './testredux/ComponentTes';
 import Signup from './components/Home/Signup';
 import TableTest from './components/Others/Table4'
 import Table2 from './components/Others/Table2'
@@ -32,6 +32,7 @@ function App() {
           <Route  path='/edit/' component={Editemp} />
           <Route  path='/signup' component={Signup} />          
           <Route  path='/forgotpassword' component={ForgotPass} />  
+          <Route exact path='/navtest' component={Reduce} />
                
           {/*    <Route path='*' component={NotFound} /> 
                    <Route exact path='/test' component={NavComponent} />

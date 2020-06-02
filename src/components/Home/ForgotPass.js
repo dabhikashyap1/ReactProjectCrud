@@ -85,7 +85,7 @@ export default class Login extends Component {
         this.state = {
             errors: {},
             IsFormValid: false,
-            username: '',
+            Email: '',
             redirect: false,
             authError: false,
             isLoading: false,
@@ -99,7 +99,7 @@ export default class Login extends Component {
    
 
     handleEmailChange = event => {
-        this.setState({ username: event.target.value });
+        this.setState({ Email: event.target.value });
     };
     handlePwdChange = event => {
         this.setState({ password: event.target.value });
@@ -112,12 +112,12 @@ export default class Login extends Component {
         let errors = {};
         event.preventDefault();
 
-        if (!this.state.username || this.state.username == "undefined") {
-            errors["username"] = "Email can not be empty";
+        if (!this.state.Email || this.state.Email == "undefined") {
+            errors["Email"] = "Email can not be empty";
             this.setState({ errors: errors });
         }
-        else if (!(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(this.state.username))) {
-            errors["username"] = "Email is not valid";
+        else if (!(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(this.state.Email))) {
+            errors["Email"] = "Email is not valid";
             this.setState({ errors: errors });
         }
        
@@ -125,34 +125,25 @@ export default class Login extends Component {
             errors = {};
             this.setState({ errors: errors });
             this.setState({ isLoading: true });
-            const url = 'https://localhost:44377/api/ApplicationUser/Login';
-            const username = this.state.username;
+            const url = 'https://localhost:44377/api/ApplicationUser/ForgotPassword';
+            const Email = this.state.Email;
             var data = {
-                UserName: username,
+                Email: Email,
             };
-            // axios.post(url, data)
-            //     .then(result => {
-            //         if (result.status == 200) {
-            //             this.setState({ open: true })
-
-            //             localStorage.setItem('token', result.data.token);
-            //             this.setState({ redirect: true, isLoading: false, showSuccessAlert: true });
-            //             localStorage.setItem('isLoggedIn', true);
-            //             // this.renderRedirect();
-            //             // alert.show("Success");
-            //               window.location.href = "/crudgrid"
-            //         }
-            //     })
-            //     .catch(error => {
-            //         console.log(error.response.data.message);
-            //         debugger;
-            //         //  alert.show("Fail");
-            //         //this.setOpen(true);
-            //         this.setState({ erroropen: true, failmsg: error.response.data.message })
-
-            //         this.setState({ showSuccessAlert: false, showFailAlert: true });
-            //         this.setState({ authError: true, isLoading: false });
-            //     });
+            axios.post(url, data)
+                .then(result => {
+                    if (result.status == 200) {
+                        this.setState({ open: true })
+                        this.setState({ redirect: true, isLoading: false, showSuccessAlert: true });
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response.data.message);
+                    debugger;
+                    this.setState({ erroropen: true, failmsg: error.response.data.message })
+                    this.setState({ showSuccessAlert: false, showFailAlert: true });
+                    this.setState({ authError: true, isLoading: false });
+                });
         }
 
 
@@ -185,11 +176,11 @@ export default class Login extends Component {
 
             <Container component="main" maxWidth="xs">
                 {this.state.erroropen &&
-                    <Alert severity="error" onClose={this.handleClose}>{this.state.failmsg}</Alert>
+                    <Alert severity="success" onClose={this.handleClose}>{this.state.failmsg}</Alert>
                 }
                 <br></br>
                 <br></br>
-                <br></br>
+                <br></br> 
                 <br></br>
                 <CssBaseline />
                 <div className={this.style.paper}>
@@ -202,15 +193,15 @@ export default class Login extends Component {
                             margin="normal"
                             required
                             fullWidth
-                            id="username"
+                            id="Email"
                             label="Email Id"
-                            name="username"
+                            name="Email"
                             autoComplete="Email Id"
                             autoFocus
                             onChange={this.handleEmailChange}
                         />
                         
-                        <span style={{ color: "red" }}>{this.state.errors["username"]}</span>
+                        <span style={{ color: "red" }}>{this.state.errors["Email"]}</span>
                     
                         <span style={{ color: "red" }}>{this.state.errors["formsubmit"]}</span>
                         <Button

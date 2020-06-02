@@ -59,7 +59,7 @@ export default class AddPage extends Component {
                 //return <Redirect to='/crudgrid' />
                 this.setState({isLoading: false})
                 console.log(error);
-            });
+            }); 
     };
 
     renderRedirect = () => {
